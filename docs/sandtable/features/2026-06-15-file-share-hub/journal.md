@@ -30,7 +30,27 @@
 - 内容: 已 `npm install` runtime/server；启动 mobile sync，feature=`2026-06-15-file-share-hub`，配对码 2752，URL `http://10.33.205.16:8765`
 - 依据/来源: `scripts/sandtable-mobile-start.sh` 输出
 
-## 2026-06-15 11:10 · 复盘择优
+## 2026-06-15 11:36 · 分享记录详情
+- 背景: 手机「分享记录可点击查看详情，有链接和二维码」（message `20260615T033517852Z-mobile-X7L32vyr`）
+- 内容: 新增 `ShareDetailDialog`；分享列表行可点击；重建并重启服务
+- 依据/来源: [等待子 agent](5ac46fd3-2513-4322-afbe-afba8b29df78)
+
+- 背景: 手机反馈「复制链接失败」「扫码下载失败」（message `20260615T033036596Z-mobile-m5lhdhzq`）
+- 内容: 复制改用 execCommand 回退（HTTP 无 clipboard API）；下载改浏览器直链（537MB APK XHR blob 在 iOS 失败）；重建前端并重启服务
+- 依据/来源: [等待子 agent](439ee65f-6567-4570-9269-97cb049a697b)
+
+- 背景: 手机「你运行一下吧，然后给我访问地址」（message `20260615T032338144Z-mobile-i_zs5hj6`）
+- 内容: Go 模式启动 ShareHub `:8080`；控制台 `http://10.33.205.16:8080/admin`；密码写入 `.env`
+- 依据/来源: [等待子 agent](ee0493ae-4c09-4c12-adbb-4d736cac4e0d)
+
+- 背景: 手机问「在我本电脑上不可以一键运行吗？」（message `20260615T032146956Z-mobile-Tjt3TH40`）
+- 内容: 新增 `scripts/start.sh`（Docker 优先，无 Docker 则 Go+pnpm 直跑）；README 补充一键说明
+- 依据/来源: [等待子 agent](5cd236c7-296b-4549-9d51-fb0a159ecde1)
+
+- 背景: 手机确认「可以」（message `20260615T031756190Z-mobile-zQ-9T_dy`）
+- 内容: `git merge sandtable/rehearse/file-share-hub-1` → master；`go test` 通过；phase→VERIFY
+- 依据/来源: [等待子 agent](adda50d2-47c4-4a68-9d3a-052c52e58219)
+
 - 背景: [实现预演子 agent](4a2e3fb6-1ca8-4fbb-93c3-03ce2bd005c9) 返回 DONE
 - 内容: 主 agent 复核 `go test` 通过；debrief-1 选定 impl-1（~92 分）；phase→INTEGRATE
 - 依据/来源: `rehearsals/debrief-1.md`
@@ -70,6 +90,44 @@
 - Feature: 2026-06-15-file-share-hub
 - 内容: confirmation conversation
 - 内容: 可以
+- Target: conversation
+
+- 来源: mobile-app:sess_40Dx4PmhL5IU
+
+## 2026-06-15T03:21:46.953Z · [问答]
+- 背景: 手机端提交开发者确认。
+- Feature: 2026-06-15-file-share-hub
+- 内容: Mobile message
+- 内容: 在我本电脑上不可以一键运行吗？
+- Target: conversation
+
+- 来源: mobile-app:sess_40Dx4PmhL5IU
+
+## 2026-06-15T03:23:38.141Z · [问答]
+- 背景: 手机端提交开发者确认。
+- Feature: 2026-06-15-file-share-hub
+- 内容: Mobile message
+- 内容: 你运行一下吧，然后给我访问地址
+- Target: conversation
+
+- 来源: mobile-app:sess_40Dx4PmhL5IU
+
+## 2026-06-15T03:30:36.590Z · [问答]
+- 背景: 手机端提交开发者确认。
+- Feature: 2026-06-15-file-share-hub
+- 内容: Mobile message
+- 内容: 有几个问题
+分享后 复制链接失败
+手机扫码后的页面点击下载失败
+- Target: conversation
+
+- 来源: mobile-app:sess_40Dx4PmhL5IU
+
+## 2026-06-15T03:35:17.847Z · [问答]
+- 背景: 手机端提交开发者确认。
+- Feature: 2026-06-15-file-share-hub
+- 内容: Mobile message
+- 内容: 我的分享记录让我可以点击查看详情，然后有分享链接和二维码
 - Target: conversation
 
 - 来源: mobile-app:sess_40Dx4PmhL5IU

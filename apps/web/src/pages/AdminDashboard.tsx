@@ -12,6 +12,7 @@ import {
   uploadFile,
 } from '../api/client'
 import ShareDialog from '../components/ShareDialog'
+import ShareDetailDialog from '../components/ShareDetailDialog'
 import UploadProgress from '../components/UploadProgress'
 import { useToast } from '../components/Toast'
 
@@ -26,6 +27,7 @@ export default function AdminDashboard() {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
   const [shareFile, setShareFile] = useState<FileRecord | null>(null)
   const [revokeTarget, setRevokeTarget] = useState<ShareRecord | null>(null)
+  const [detailShare, setDetailShare] = useState<ShareRecord | null>(null)
   const [dragOver, setDragOver] = useState(false)
 
   const load = useCallback(async () => {
@@ -186,13 +188,17 @@ export default function AdminDashboard() {
             </thead>
             <tbody>
               {shares.map((s) => (
-                <tr key={s.id}>
+                <tr
+                  key={s.id}
+                  className="share-row-clickable"
+                  onClick={() => setDetailShare(s)}
+                >
                   <td data-label="文件">{s.fileName}</td>
                   <td data-label="备注">{s.note || '—'}</td>
                   <td data-label="状态" className={s.status === '有效' ? 'status-active' : 'status-revoked'}>
                     {s.status}
                   </td>
-                  <td data-label="操作">
+                  <td data-label="操作" onClick={(e) => e.stopPropagation()}>
                     {s.status === '有效' && (
                       <button className="btn btn-danger" onClick={() => setRevokeTarget(s)}>
                         撤销
@@ -212,6 +218,10 @@ export default function AdminDashboard() {
           onClose={() => setShareFile(null)}
           onCreated={load}
         />
+      )}
+
+      {detailShare && (
+        <ShareDetailDialog share={detailShare} onClose={() => setDetailShare(null)} />
       )}
 
       {revokeTarget && (

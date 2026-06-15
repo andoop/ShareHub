@@ -1,13 +1,11 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
-  downloadFile,
   formatSize,
   getPublicShare,
   verifyPassphrase,
   PublicShareInfo,
 } from '../api/client'
-import UploadProgress from '../components/UploadProgress'
 
 export default function DownloadPage() {
   const { token = '' } = useParams()
@@ -17,7 +15,6 @@ export default function DownloadPage() {
   const [passError, setPassError] = useState('')
   const [verified, setVerified] = useState(false)
   const [ticket, setTicket] = useState<string | null>(null)
-  const [downloadProgress, setDownloadProgress] = useState<number | null>(null)
   const [downloading, setDownloading] = useState(false)
 
   useEffect(() => {
@@ -52,25 +49,16 @@ export default function DownloadPage() {
     }
   }
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!info || info.status !== 'ok') return
     setDownloading(true)
-    setDownloadProgress(0)
-    try {
-      const blob = await downloadFile(token, ticket, setDownloadProgress)
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = info.fileName
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch (err: unknown) {
-      const apiErr = err as { error?: string }
-      setInfo({ ...info, status: 'error', message: apiErr.error || '下载失败，请稍后重试' })
-    } finally {
-      setDownloading(false)
-      setDownloadProgress(null)
+    // 大文件 + iOS Safari 不支持 XHR blob 触发下载，改直链让浏览器原生处理
+    let url = `/api/public/shares/${encodeURIComponent(token)}/download`
+    if (ticket) {
+      url += `?ticket=${encodeURIComponent(ticket)}`
     }
+    window.location.href = url
+    setTimeout(() => setDownloading(false), 1500)
   }
 
   if (loading) {
@@ -127,11 +115,11 @@ export default function DownloadPage() {
               disabled={downloading}
               onClick={handleDownload}
             >
-              {downloading ? '下载中…' : '下载文件'}
+              {downloading ? '正在打开下载…' : '下载文件'}
             </button>
-            {downloadProgress !== null && (
-              <UploadProgress progress={downloadProgress} label="下载中" />
-            )}
+            <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', marginTop: 12 }}>
+              大文件将交由浏览器下载；若未自动开始，请稍候或刷新后重试。
+            </p>
           </>
         )}
       </div>

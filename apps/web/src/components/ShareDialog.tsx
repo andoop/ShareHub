@@ -86,12 +86,32 @@ export default function ShareDialog({ file, onClose, onCreated }: Props) {
 
   const copyLink = async () => {
     if (!result) return
+    const text = result.shareUrl
+    // HTTP 局域网无 secure context，clipboard API 常失败（尤其 iOS）
     try {
-      await navigator.clipboard.writeText(result.shareUrl)
-      showToast('链接已复制')
+      if (window.isSecureContext && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text)
+        showToast('链接已复制')
+        return
+      }
     } catch {
-      showToast('复制失败，请手动选择链接', 'error')
+      /* fallback below */
     }
+    const input = document.querySelector<HTMLInputElement>('.share-url .input')
+    if (input) {
+      input.focus()
+      input.select()
+      input.setSelectionRange(0, text.length)
+    }
+    try {
+      if (document.execCommand('copy')) {
+        showToast('链接已复制')
+        return
+      }
+    } catch {
+      /* manual */
+    }
+    showToast('请长按上方链接手动复制', 'error')
   }
 
   return (

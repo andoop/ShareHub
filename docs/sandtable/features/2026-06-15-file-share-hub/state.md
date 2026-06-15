@@ -1,40 +1,40 @@
 ---
 feature: 2026-06-15-file-share-hub
-phase: INTEGRATE
+phase: VERIFY
 blocked: false
-updated: 2026-06-15T11:10:00+08:00
+updated: 2026-06-15T11:18:00+08:00
 prd_confirmed: true
 tasks:
   - id: T1
     title: 项目脚手架与配置
-    status: rehearsed
+    status: integrated
   - id: T2
     title: 数据库与存储层
-    status: rehearsed
+    status: integrated
   - id: T3
     title: 管理员鉴权
-    status: rehearsed
+    status: integrated
   - id: T4
     title: 文件上传与列表 API
-    status: rehearsed
+    status: integrated
   - id: T5
     title: 分享 CRUD 与二维码
-    status: rehearsed
+    status: integrated
   - id: T6
     title: 公开下载 API
-    status: rehearsed
+    status: integrated
   - id: T7
     title: React 前端
-    status: rehearsed
+    status: integrated
   - id: T8
     title: Docker 与 NAS 文档
-    status: rehearsed
+    status: integrated
   - id: T9
     title: 自动化测试收尾
-    status: rehearsed
+    status: integrated
   - id: T10
     title: 易用性与商业级体验收尾
-    status: rehearsed
+    status: integrated
 rehearsals:
   mental:  { runs: 1, last: closed }
   redteam: { runs: 1, last: held }
@@ -51,7 +51,7 @@ selected_worktree: /Volumes/rsext/projects6/share-rehearsal-1
 ---
 
 ## 当前进展
-联合预演完成：mental✓ redteam✓ impl✓ debrief✓。已选定 `impl-1-file-share-hub-1`（评分 ~92）。待 INTEGRATE 合并到主分支 + VERIFY（TC9 扫码、TC12 Docker）。
+impl-1 已合并到 master（手机确认「可以」）。自动化测试通过，phase→VERIFY。待人工：TC9 扫码、TC12 Docker 持久化。
 
 ## 关键决策（最近）
 - 实现预演 DONE，测试通过（主 agent 复核）

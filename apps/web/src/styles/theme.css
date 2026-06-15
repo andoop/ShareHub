@@ -330,10 +330,19 @@ a {
 .share-url input {
   flex: 1;
   min-width: 0;
+  user-select: all;
+  -webkit-user-select: all;
 }
 
 .status-revoked { color: var(--color-danger); }
 .status-active { color: var(--color-success); }
+
+.share-row-clickable {
+  cursor: pointer;
+}
+.share-row-clickable:hover td {
+  background: rgba(99, 102, 241, 0.06);
+}
 
 @media (max-width: 640px) {
   .app-shell {
