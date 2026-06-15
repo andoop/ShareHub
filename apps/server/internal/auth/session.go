@@ -69,17 +69,23 @@ func (s *Service) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			http.Error(w, `{"error":"请先登录","code":"UNAUTHORIZED"}`, http.StatusUnauthorized)
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write([]byte(`{"error":"请先登录","code":"UNAUTHORIZED"}`))
 			return
 		}
 		parts := strings.SplitN(authHeader, " ", 2)
 		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
-			http.Error(w, `{"error":"请先登录","code":"UNAUTHORIZED"}`, http.StatusUnauthorized)
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write([]byte(`{"error":"请先登录","code":"UNAUTHORIZED"}`))
 			return
 		}
 		claims, err := s.ValidateToken(parts[1])
 		if err != nil {
-			http.Error(w, `{"error":"登录已过期，请重新登录","code":"UNAUTHORIZED"}`, http.StatusUnauthorized)
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write([]byte(`{"error":"登录已过期，请重新登录","code":"UNAUTHORIZED"}`))
 			return
 		}
 		ctx := context.WithValue(r.Context(), UserContextKey, claims.User)
