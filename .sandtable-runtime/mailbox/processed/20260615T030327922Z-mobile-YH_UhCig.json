@@ -1,0 +1,18 @@
+{
+  "id": "20260615T030327922Z-mobile-YH_UhCig",
+  "feature": "2026-06-15-file-share-hub",
+  "sessionId": "sess_40Dx4PmhL5IU",
+  "agent": {
+    "id": "custom-QkOoIMfF",
+    "kind": "custom",
+    "name": "Sandtable agent"
+  },
+  "source": "mobile",
+  "type": "chat_message",
+  "createdAt": "2026-06-15T03:03:27.922Z",
+  "payload": {
+    "text": "继续吧，rehearse",
+    "target": "conversation",
+    "kind": "chat"
+  }
+}

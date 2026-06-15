@@ -1,0 +1,18 @@
+{
+  "id": "20260615T030211441Z-mobile-qFdgkelo",
+  "feature": "2026-06-15-file-share-hub",
+  "sessionId": "sess_40Dx4PmhL5IU",
+  "agent": {
+    "id": "custom-QkOoIMfF",
+    "kind": "custom",
+    "name": "Sandtable agent"
+  },
+  "source": "mobile",
+  "type": "chat_message",
+  "createdAt": "2026-06-15T03:02:11.441Z",
+  "payload": {
+    "text": "一定要方便使用，做这个就是为了方便，还有一个要求，一定要按照商业软件的要求来做",
+    "target": "conversation",
+    "kind": "chat"
+  }
+}

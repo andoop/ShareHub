@@ -1,0 +1,27 @@
+{
+  "name": "sandtable",
+  "version": "0.1.0",
+  "description": "Sandtable rehearsal-driven development workflow for coding agents",
+  "author": {
+    "name": "andoop"
+  },
+  "repository": "https://github.com/andoop/sandtable",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Sandtable",
+    "shortDescription": "Sandtable-driven development commands for Codex.",
+    "longDescription": "Sandtable brings rehearsal-driven development into Codex with slash-command workflows, persistent planning artifacts, mental rehearsal, red-team review, isolated implementation rehearsals, and debrief selection.",
+    "developerName": "andoop",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Run /sandtable:sandtable-start for this feature idea.",
+      "Run /sandtable:sandtable-status in this repo."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

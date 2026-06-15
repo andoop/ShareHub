@@ -1,0 +1,12 @@
+{
+  "name": "sandtable-local",
+  "interface": { "displayName": "Sandtable Local" },
+  "plugins": [
+    {
+      "name": "sandtable",
+      "source": { "source": "local", "path": "./plugins/sandtable" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Developer Tools"
+    }
+  ]
+}
