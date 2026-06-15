@@ -1,0 +1,13 @@
+services:
+  sharehub:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+    environment:
+      SHAREHUB_ADMIN_PASS: ${SHAREHUB_ADMIN_PASS}
+      SHAREHUB_ADMIN_USER: ${SHAREHUB_ADMIN_USER:-admin}
+      SHAREHUB_DATA_DIR: /data
+      SHAREHUB_JWT_SECRET: ${SHAREHUB_JWT_SECRET:-change-me-in-prod}
+      SHAREHUB_ADDR: ":8080"
