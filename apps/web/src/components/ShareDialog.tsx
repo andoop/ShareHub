@@ -121,13 +121,16 @@ export default function ShareDialog({ file, onClose, onCreated }: Props) {
           <>
             <h2>创建分享 · {file.name}</h2>
             <div className="form-group">
-              <label>备注（可选）</label>
-              <input
-                className="input"
-                placeholder="例如：发给小李"
+              <label>分享文案（可选）</label>
+              <textarea
+                className="input share-message-input"
+                placeholder="打开分享页时向接收者展示的说明，例如：这是本次项目的最终稿，请查收"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
+                rows={3}
+                maxLength={500}
               />
+              <p className="field-hint">接收者打开链接即可看到这段文案</p>
             </div>
             <div className="checkbox-row">
               <input

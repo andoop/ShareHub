@@ -33,6 +33,7 @@ export interface PublicShareInfo {
   needsPassphrase: boolean
   status: string
   message?: string
+  shareMessage?: string
 }
 
 function getToken(): string | null {
@@ -146,6 +147,26 @@ export async function revokeShare(id: string): Promise<void> {
     headers: { Authorization: `Bearer ${getToken()}` },
   })
   if (!res.ok) throw await parseError(res)
+}
+
+export interface StorageInfo {
+  dataDir: string
+  blobDir: string
+  databasePath: string
+  usedBytes: number
+  fileCount: number
+  diskFreeBytes?: number
+  maxUploadMB: number
+  configurable: boolean
+  configHint: string
+}
+
+export async function fetchStorageInfo(): Promise<StorageInfo> {
+  const res = await fetch('/api/storage', {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  })
+  if (!res.ok) throw await parseError(res)
+  return res.json()
 }
 
 export async function getPublicShare(token: string): Promise<PublicShareInfo> {

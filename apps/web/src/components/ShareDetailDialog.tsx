@@ -66,8 +66,10 @@ export default function ShareDetailDialog({ share, onClose }: Props) {
         <h2>分享详情</h2>
         <p style={{ color: 'var(--color-muted)', marginTop: 0 }}>
           {share.fileName}
-          {share.note ? ` · ${share.note}` : ''}
         </p>
+        {share.note && (
+          <p className="share-detail-message">「{share.note}」</p>
+        )}
         <p>
           状态：<span className={share.status === '有效' ? 'status-active' : 'status-revoked'}>{share.status}</span>
           {share.hasPassphrase && ' · 已启用提取码'}

@@ -7,6 +7,8 @@ import {
   listFiles,
   listShares,
   revokeShare,
+  fetchStorageInfo,
+  StorageInfo,
   FileRecord,
   ShareRecord,
   uploadFile,
@@ -28,15 +30,17 @@ export default function AdminDashboard() {
   const [shareFile, setShareFile] = useState<FileRecord | null>(null)
   const [revokeTarget, setRevokeTarget] = useState<ShareRecord | null>(null)
   const [detailShare, setDetailShare] = useState<ShareRecord | null>(null)
+  const [storage, setStorage] = useState<StorageInfo | null>(null)
   const [dragOver, setDragOver] = useState(false)
 
   const load = useCallback(async () => {
     try {
       const me = await fetchMe()
       setUser(me.user)
-      const [f, s] = await Promise.all([listFiles(), listShares()])
+      const [f, s, st] = await Promise.all([listFiles(), listShares(), fetchStorageInfo()])
       setFiles(f)
       setShares(s)
+      setStorage(st)
     } catch {
       clearToken()
       navigate('/admin/login', { replace: true })
@@ -134,6 +138,53 @@ export default function AdminDashboard() {
         {uploadProgress !== null && <UploadProgress progress={uploadProgress} />}
       </div>
 
+      {storage && (
+        <details className="card storage-details" style={{ marginBottom: 20 }}>
+          <summary className="storage-summary">
+            <span className="storage-summary-title">存储与空间</span>
+            <span className="storage-summary-meta">
+              已用 {formatSize(storage.usedBytes)} · {storage.fileCount} 个文件
+            </span>
+          </summary>
+          <p style={{ color: 'var(--color-muted)', marginTop: 12 }}>
+            文件保存在服务器本地目录，通过环境变量配置（重启后生效）。
+          </p>
+          <table className="file-table storage-table">
+            <tbody>
+              <tr>
+                <td data-label="工作目录">工作目录</td>
+                <td data-label="路径"><code>{storage.dataDir}</code></td>
+              </tr>
+              <tr>
+                <td data-label="文件目录">文件目录</td>
+                <td data-label="路径"><code>{storage.blobDir}</code></td>
+              </tr>
+              <tr>
+                <td data-label="数据库">数据库</td>
+                <td data-label="路径"><code>{storage.databasePath}</code></td>
+              </tr>
+              <tr>
+                <td data-label="已用空间">已用空间</td>
+                <td data-label="数值">
+                  {formatSize(storage.usedBytes)} · {storage.fileCount} 个文件
+                </td>
+              </tr>
+              {storage.diskFreeBytes != null && (
+                <tr>
+                  <td data-label="磁盘剩余">磁盘剩余</td>
+                  <td data-label="数值">{formatSize(storage.diskFreeBytes)}</td>
+                </tr>
+              )}
+              <tr>
+                <td data-label="单文件上限">单文件上限</td>
+                <td data-label="数值">{storage.maxUploadMB} MB</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style={{ fontSize: '0.9rem', color: 'var(--color-muted)' }}>{storage.configHint}</p>
+        </details>
+      )}
+
       <div className="card" style={{ marginBottom: 20 }}>
         <h2 style={{ marginTop: 0 }}>我的文件</h2>
         {files.length === 0 ? (
@@ -181,7 +232,7 @@ export default function AdminDashboard() {
             <thead>
               <tr>
                 <th>文件</th>
-                <th>备注</th>
+                <th>分享文案</th>
                 <th>状态</th>
                 <th>操作</th>
               </tr>
@@ -194,7 +245,7 @@ export default function AdminDashboard() {
                   onClick={() => setDetailShare(s)}
                 >
                   <td data-label="文件">{s.fileName}</td>
-                  <td data-label="备注">{s.note || '—'}</td>
+                  <td data-label="分享文案">{s.note || '—'}</td>
                   <td data-label="状态" className={s.status === '有效' ? 'status-active' : 'status-revoked'}>
                     {s.status}
                   </td>

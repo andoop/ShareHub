@@ -30,11 +30,12 @@ func NewDownloadHandler(shares *store.ShareStore, files *store.FileStore) *Downl
 }
 
 type publicShareInfo struct {
-	FileName      string `json:"fileName"`
-	Size          int64  `json:"size"`
-	NeedsPassphrase bool `json:"needsPassphrase"`
-	Status        string `json:"status"`
-	Message       string `json:"message,omitempty"`
+	FileName        string `json:"fileName"`
+	Size            int64  `json:"size"`
+	NeedsPassphrase bool   `json:"needsPassphrase"`
+	Status          string `json:"status"`
+	Message         string `json:"message,omitempty"`
+	ShareMessage    string `json:"shareMessage,omitempty"`
 }
 
 func (h *DownloadHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
@@ -52,6 +53,7 @@ func (h *DownloadHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 		Size:            file.Size,
 		NeedsPassphrase: rec.HasPassphrase,
 		Status:          "ok",
+		ShareMessage:    rec.Note,
 	})
 }
 

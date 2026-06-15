@@ -22,6 +22,7 @@ type FileRecord struct {
 
 type FileStore struct {
 	db      *sql.DB
+	dataDir string
 	blobDir string
 }
 
@@ -30,7 +31,15 @@ func NewFileStore(db *sql.DB, dataDir string) (*FileStore, error) {
 	if err := os.MkdirAll(blobDir, 0o755); err != nil {
 		return nil, fmt.Errorf("create blob dir: %w", err)
 	}
-	return &FileStore{db: db, blobDir: blobDir}, nil
+	return &FileStore{db: db, dataDir: dataDir, blobDir: blobDir}, nil
+}
+
+func (s *FileStore) DataDir() string  { return s.dataDir }
+func (s *FileStore) BlobDir() string { return s.blobDir }
+
+func (s *FileStore) UsageStats(ctx context.Context) (totalBytes int64, fileCount int, err error) {
+	err = s.db.QueryRowContext(ctx, `SELECT COALESCE(SUM(size),0), COUNT(*) FROM files`).Scan(&totalBytes, &fileCount)
+	return
 }
 
 func (s *FileStore) Save(ctx context.Context, name string, size int64, r io.Reader) (*FileRecord, error) {

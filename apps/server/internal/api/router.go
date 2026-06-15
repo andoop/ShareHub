@@ -20,6 +20,7 @@ type Server struct {
 	fileH  *FileHandler
 	shareH *ShareHandler
 	downH  *DownloadHandler
+	storeH *StorageHandler
 	webFS  fs.FS
 }
 
@@ -32,6 +33,7 @@ func NewServer(cfg config.Config, files *store.FileStore, shares *store.ShareSto
 		fileH:  NewFileHandler(files, cfg.MaxUploadMB),
 		shareH: NewShareHandler(shares, files, cfg.PublicBaseURL),
 		downH:  NewDownloadHandler(shares, files),
+		storeH: NewStorageHandler(cfg, files),
 		webFS:  webFS,
 	}
 }
@@ -51,6 +53,7 @@ func (s *Server) Router() http.Handler {
 			r.Get("/auth/me", s.authH.Me)
 			r.Post("/files/upload", s.fileH.Upload)
 			r.Get("/files", s.fileH.List)
+			r.Get("/storage", s.storeH.Info)
 			r.Post("/shares", s.shareH.Create)
 			r.Get("/shares", s.shareH.List)
 			r.Delete("/shares/{id}", s.shareH.Revoke)
