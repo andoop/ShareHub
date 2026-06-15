@@ -30,7 +30,15 @@
 - 内容: 已 `npm install` runtime/server；启动 mobile sync，feature=`2026-06-15-file-share-hub`，配对码 2752，URL `http://10.33.205.16:8765`
 - 依据/来源: `scripts/sandtable-mobile-start.sh` 输出
 
-## 2026-06-15 11:02 · 手机产品反馈
+## 2026-06-15 11:10 · 复盘择优
+- 背景: [实现预演子 agent](4a2e3fb6-1ca8-4fbb-93c3-03ce2bd005c9) 返回 DONE
+- 内容: 主 agent 复核 `go test` 通过；debrief-1 选定 impl-1（~92 分）；phase→INTEGRATE
+- 依据/来源: `rehearsals/debrief-1.md`
+
+- 背景: 手机消息「继续吧，rehearse」（message `20260615T030327922Z-mobile-YH_UhCig`）
+- 内容: mental-1 LOGIC_CLOSED（补 plan T7/T10）；redteam-1 HELD；git init + worktree `share-rehearsal-1`；派发实现预演子 agent
+- 依据/来源: [等待子 agent](b91fc48f-29e9-40bd-912e-488d09c0b835)
+
 - 背景: 手机端 chat 消息（refine PRD）
 - 内容: 「一定要方便使用，做这个就是为了方便」→ 写入 PRD FR14–FR15、§6/MUST 易用性首要；「一定要按照商业软件的要求来做」→ FR16–FR18、constraints 商业交付标准
 - 依据/来源: [等待子 agent](45698768-85ff-4400-a062-583f96254d16)；message id `20260615T030211441Z-mobile-qFdgkelo`
@@ -53,6 +61,15 @@
 - Feature: 2026-06-15-file-share-hub
 - 内容: Mobile message
 - 内容: 继续吧，rehearse
+- Target: conversation
+
+- 来源: mobile-app:sess_40Dx4PmhL5IU
+
+## 2026-06-15T03:17:56.187Z · [问答]
+- 背景: 手机端提交开发者确认。
+- Feature: 2026-06-15-file-share-hub
+- 内容: confirmation conversation
+- 内容: 可以
 - Target: conversation
 
 - 来源: mobile-app:sess_40Dx4PmhL5IU
