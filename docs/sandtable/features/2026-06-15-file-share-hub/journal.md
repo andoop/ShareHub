@@ -30,7 +30,11 @@
 - 内容: 已 `npm install` runtime/server；启动 mobile sync，feature=`2026-06-15-file-share-hub`，配对码 2752，URL `http://10.33.205.16:8765`
 - 依据/来源: `scripts/sandtable-mobile-start.sh` 输出
 
-## 2026-06-15 11:36 · 分享记录详情
+## 2026-06-15 11:50 · GitHub 开源打磨
+- 背景: 手机「好好经营 GitHub 当成熟来源项目」（message `20260615T035004928Z-mobile-YTdw9vOO`）
+- 内容: 完善 README（徽章/功能/架构）、MIT LICENSE、GitHub Actions CI；push 至 andoop/ShareHub
+- 依据/来源: [等待子 agent](276825f4-793a-4da5-856d-ffc659734c12)
+
 - 背景: 手机「分享记录可点击查看详情，有链接和二维码」（message `20260615T033517852Z-mobile-X7L32vyr`）
 - 内容: 新增 `ShareDetailDialog`；分享列表行可点击；重建并重启服务
 - 依据/来源: [等待子 agent](5ac46fd3-2513-4322-afbe-afba8b29df78)
@@ -128,6 +132,24 @@
 - Feature: 2026-06-15-file-share-hub
 - 内容: Mobile message
 - 内容: 我的分享记录让我可以点击查看详情，然后有分享链接和二维码
+- Target: conversation
+
+- 来源: mobile-app:sess_40Dx4PmhL5IU
+
+## 2026-06-15T03:44:00.326Z · [问答]
+- 背景: 手机端提交开发者确认。
+- Feature: 2026-06-15-file-share-hub
+- 内容: Mobile message
+- 内容: 还在吗
+- Target: conversation
+
+- 来源: mobile-app:sess_40Dx4PmhL5IU
+
+## 2026-06-15T03:50:04.922Z · [问答]
+- 背景: 手机端提交开发者确认。
+- Feature: 2026-06-15-file-share-hub
+- 内容: Mobile message
+- 内容: 你好好经营一下GitHub 当做一个成熟的来源项目
 - Target: conversation
 
 - 来源: mobile-app:sess_40Dx4PmhL5IU
