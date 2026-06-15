@@ -148,10 +148,6 @@ export async function revokeShare(id: string): Promise<void> {
   if (!res.ok) throw await parseError(res)
 }
 
-export function qrcodeUrl(shareId: string): string {
-  return `/api/shares/${shareId}/qrcode`
-}
-
 export async function getPublicShare(token: string): Promise<PublicShareInfo> {
   const res = await fetch(`/api/public/shares/${token}/`)
   const data = await res.json()

@@ -1,6 +1,10 @@
-import { useState } from 'react'
-import { createShare, qrcodeUrl, FileRecord } from '../api/client'
+import { useEffect, useState } from 'react'
+import { createShare, FileRecord } from '../api/client'
 import { useToast } from './Toast'
+
+function getToken(): string | null {
+  return localStorage.getItem('sharehub_token')
+}
 
 interface Props {
   file: FileRecord
@@ -17,7 +21,31 @@ export default function ShareDialog({ file, onClose, onCreated }: Props) {
   const [maxDownloads, setMaxDownloads] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{ shareUrl: string; id: string } | null>(null)
+  const [qrBlobUrl, setQrBlobUrl] = useState<string | null>(null)
   const [passError, setPassError] = useState('')
+
+  useEffect(() => {
+    if (!result) {
+      setQrBlobUrl(null)
+      return
+    }
+    let revoked = false
+    fetch(`/api/shares/${result.id}/qrcode`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('qrcode failed')
+        return res.blob()
+      })
+      .then((blob) => {
+        if (!revoked) setQrBlobUrl(URL.createObjectURL(blob))
+      })
+      .catch(() => showToast('二维码加载失败', 'error'))
+    return () => {
+      revoked = true
+      if (qrBlobUrl) URL.revokeObjectURL(qrBlobUrl)
+    }
+  }, [result, showToast])
 
   const handleCreate = async () => {
     if (usePass && passphrase.length < 4) {
@@ -143,7 +171,11 @@ export default function ShareDialog({ file, onClose, onCreated }: Props) {
             </div>
             <div className="qrcode-box">
               <p>扫码下载</p>
-              <img src={qrcodeUrl(result.id)} alt="分享二维码" />
+              {qrBlobUrl ? (
+                <img src={qrBlobUrl} alt="分享二维码" />
+              ) : (
+                <div className="skeleton" style={{ width: 200, height: 200, margin: '0 auto' }} />
+              )}
             </div>
             <div className="modal-actions">
               <button className="btn btn-primary" onClick={onClose}>
