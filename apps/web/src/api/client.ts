@@ -170,8 +170,22 @@ export async function fetchStorageInfo(): Promise<StorageInfo> {
 }
 
 export async function getPublicShare(token: string): Promise<PublicShareInfo> {
-  const res = await fetch(`/api/public/shares/${token}/`)
-  const data = await res.json()
+  if (!token) {
+    return {
+      fileName: '',
+      size: 0,
+      needsPassphrase: false,
+      status: 'not_found',
+      message: '分享链接无效',
+    }
+  }
+  const res = await fetch(`/api/public/shares/${encodeURIComponent(token)}`)
+  let data: PublicShareInfo
+  try {
+    data = await res.json()
+  } catch {
+    throw { error: '无法加载分享信息，请刷新重试', code: 'BAD_RESPONSE' }
+  }
   if (!res.ok && res.status !== 410) throw data
   return data
 }
@@ -230,4 +244,16 @@ export function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
   if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`
+}
+
+export function formatDateTime(iso: string): string {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return '—'
+  return d.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }

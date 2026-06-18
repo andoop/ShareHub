@@ -27,7 +27,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	fileStore, err := store.NewFileStore(conn, cfg.DataDir)
+	fileStore, err := store.NewFileStore(conn, cfg.DataDir, cfg.BlobDir)
 	if err != nil {
 		log.Fatalf("file store: %v", err)
 	}

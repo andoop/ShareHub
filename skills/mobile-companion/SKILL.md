@@ -59,6 +59,19 @@ POST /mobile-sync/agent-state {"role":"main","state":"working|idle|error","detai
 
 手机据此显示 主 agent（空闲/处理中/已断开/出错）与 等待器（就绪/收信中/处理中/已退出）。
 
+## 常驻同步义务（sync server 活着即生效）
+
+只要 mobile-sync **active**（server 在跑 + `.sandtable-runtime/session/mobile-sync.json` 的 `active=true`），同步手机就是**常驻义务**，**与触发来源无关**——无论指令来自手机，还是开发者直接在**电脑端**与你对话，规则一样。
+
+- **不要只在手机发消息时才同步。** 在重要动作的**前 / 中 / 后**主动同步：
+  - 阶段切换 → `POST /features/<feature>/sync/phase` 或 `POST /agent/sessions/<sid>/messages {"kind":"status"}`。
+  - 关键决策 / 选型 / 取舍 → 同步一句话摘要。
+  - 产生待确认问题或阻塞 → 同步 `{"kind":"question"}`，并按 protocol 落 `questions.md` / `state.md`。
+  - 改完 Sandtable 文档（PRD/tests/plan/state）→ `POST /mobile-sync/push-state`。
+  - 开始 / 完成一项重要工作 → 补报 `agent-state main=working|idle` + 一句话进展。
+- **判据"重要时机"**：会影响闭环 / 验收 / 关键决策、或开发者会想在手机上看到的节点。琐碎中间步不刷屏。
+- **等待子 agent 永久阻塞、不设超时（纯等待）**：默认**不传** `SANDTABLE_WAIT_MAX_SECONDS`，子 agent 一直阻塞到拿到一条消息才返回。**仅当**宿主对单个子 agent 有**硬执行上限**会截断无限阻塞时，才用该兜底（如 `=240`）；超时返回后主 agent **立即无缝再派一个**等待子 agent，全程不自己轮询、不设别的超时。
+
 ## Red Flags
 
 | 念头 | 现实 |
@@ -68,5 +81,7 @@ POST /mobile-sync/agent-state {"role":"main","state":"working|idle|error","detai
 | "用 automation / 后台任务跑 wait 更省事" | 禁止（Codex 尤其）。必须派真正的子 agent，主 agent 阻塞等它回话。 |
 | "等待子 agent 顺便读 journal / 改文档" | 禁止。单职责：轮询、交付、退出。 |
 | "处理完不用 ack" | 必须 ack，否则同一条被反复取出。 |
+| "只在手机发消息时才同步" | 错。sync server 活着就是常驻同步义务，电脑端对话也要在重要动作前/中/后同步。 |
+| "给等待子 agent 设个超时省心" | 默认永久阻塞、不设超时；仅宿主有硬执行上限才用 `SANDTABLE_WAIT_MAX_SECONDS` 兜底，超时即无缝再派一个。 |
 
 完整协议见 `docs/mobile-review-companion/protocol.md`，启动与真机验证见 `runtime.md` / `verification.md`。

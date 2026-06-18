@@ -8,6 +8,12 @@ import {
 } from '../api/client'
 import { useToast } from '../components/Toast'
 
+declare global {
+  interface Window {
+    __SHARE_BOOTSTRAP__?: PublicShareInfo
+  }
+}
+
 function fileExtension(name: string): string {
   const i = name.lastIndexOf('.')
   if (i <= 0 || i === name.length - 1) return 'FILE'
@@ -56,6 +62,27 @@ export default function DownloadPage() {
   const [downloading, setDownloading] = useState(false)
 
   useEffect(() => {
+    const bootstrap = window.__SHARE_BOOTSTRAP__
+    if (bootstrap) {
+      delete window.__SHARE_BOOTSTRAP__
+      setInfo(bootstrap)
+      if (bootstrap.status === 'ok' && !bootstrap.needsPassphrase) {
+        setVerified(true)
+      }
+      setLoading(false)
+      return
+    }
+    if (!token) {
+      setInfo({
+        fileName: '',
+        size: 0,
+        needsPassphrase: false,
+        status: 'not_found',
+        message: '分享链接无效',
+      })
+      setLoading(false)
+      return
+    }
     getPublicShare(token)
       .then((data) => {
         setInfo(data)
@@ -64,13 +91,14 @@ export default function DownloadPage() {
           setVerified(true)
         }
       })
-      .catch(() => {
+      .catch((err: unknown) => {
+        const apiErr = err as { error?: string; message?: string }
         setInfo({
           fileName: '',
           size: 0,
           needsPassphrase: false,
           status: 'not_found',
-          message: '分享不存在或已失效，请联系分享者重新发送',
+          message: apiErr.message || apiErr.error || '分享不存在或已失效，请联系分享者重新发送',
         })
       })
       .finally(() => setLoading(false))

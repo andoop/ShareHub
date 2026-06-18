@@ -40,21 +40,29 @@ type publicShareInfo struct {
 
 func (h *DownloadHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 	token := chi.URLParam(r, "token")
-	rec, file, status, msg := h.loadShare(r, token)
-	if status != store.ShareOK {
-		writeJSON(w, http.StatusGone, publicShareInfo{
-			Status:  string(status),
-			Message: msg,
-		})
+	info, _ := h.publicInfo(r, token)
+	if info.Status != "ok" {
+		writeJSON(w, http.StatusGone, info)
 		return
 	}
-	writeJSON(w, http.StatusOK, publicShareInfo{
+	writeJSON(w, http.StatusOK, info)
+}
+
+func (h *DownloadHandler) publicInfo(r *http.Request, token string) (publicShareInfo, store.ShareStatus) {
+	rec, file, status, msg := h.loadShare(r, token)
+	if status != store.ShareOK {
+		return publicShareInfo{
+			Status:  string(status),
+			Message: msg,
+		}, status
+	}
+	return publicShareInfo{
 		FileName:        file.OriginalName,
 		Size:            file.Size,
 		NeedsPassphrase: rec.HasPassphrase,
 		Status:          "ok",
 		ShareMessage:    rec.Note,
-	})
+	}, store.ShareOK
 }
 
 type verifyRequest struct {

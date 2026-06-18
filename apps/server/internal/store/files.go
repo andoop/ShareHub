@@ -26,8 +26,10 @@ type FileStore struct {
 	blobDir string
 }
 
-func NewFileStore(db *sql.DB, dataDir string) (*FileStore, error) {
-	blobDir := filepath.Join(dataDir, "blobs")
+func NewFileStore(db *sql.DB, dataDir, blobDir string) (*FileStore, error) {
+	if blobDir == "" {
+		blobDir = filepath.Join(dataDir, "blobs")
+	}
 	if err := os.MkdirAll(blobDir, 0o755); err != nil {
 		return nil, fmt.Errorf("create blob dir: %w", err)
 	}

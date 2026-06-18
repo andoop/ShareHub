@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -48,6 +49,7 @@ func (h *FileHandler) Upload(w http.ResponseWriter, r *http.Request) {
 func (h *FileHandler) List(w http.ResponseWriter, r *http.Request) {
 	list, err := h.files.List(r.Context())
 	if err != nil {
+		log.Printf("file list failed: %v", err)
 		writeError(w, http.StatusInternalServerError, "加载文件列表失败", "LIST_FAILED")
 		return
 	}

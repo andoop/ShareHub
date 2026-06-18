@@ -92,6 +92,7 @@ a {
   border-radius: 10px;
   font-size: 16px;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
 }

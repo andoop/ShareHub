@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ShareRecord } from '../api/client'
+import { ShareRecord, formatDateTime } from '../api/client'
 import { useToast } from './Toast'
 
 function getToken(): string | null {
@@ -73,6 +73,11 @@ export default function ShareDetailDialog({ share, onClose }: Props) {
         <p>
           状态：<span className={share.status === '有效' ? 'status-active' : 'status-revoked'}>{share.status}</span>
           {share.hasPassphrase && ' · 已启用提取码'}
+        </p>
+        <p style={{ color: 'var(--color-muted)', marginTop: 0 }}>
+          创建时间：{formatDateTime(share.createdAt)}
+          <br />
+          有效期：{share.expiresAt ? formatDateTime(share.expiresAt) : '永久'}
         </p>
         <div className="share-url">
           <input

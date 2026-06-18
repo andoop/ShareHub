@@ -4,6 +4,7 @@ import {
   clearToken,
   fetchMe,
   formatSize,
+  formatDateTime,
   listFiles,
   listShares,
   revokeShare,
@@ -33,24 +34,42 @@ export default function AdminDashboard() {
   const [storage, setStorage] = useState<StorageInfo | null>(null)
   const [dragOver, setDragOver] = useState(false)
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (withSkeleton = false) => {
+    if (withSkeleton) setLoading(true)
     try {
       const me = await fetchMe()
       setUser(me.user)
-      const [f, s, st] = await Promise.all([listFiles(), listShares(), fetchStorageInfo()])
-      setFiles(f)
-      setShares(s)
-      setStorage(st)
     } catch {
       clearToken()
       navigate('/admin/login', { replace: true })
-    } finally {
-      setLoading(false)
+      return
     }
-  }, [navigate])
+
+    const [filesR, sharesR, storageR] = await Promise.allSettled([
+      listFiles(),
+      listShares(),
+      fetchStorageInfo(),
+    ])
+    if (filesR.status === 'fulfilled') {
+      setFiles(filesR.value)
+    } else {
+      const err = filesR.reason as { error?: string }
+      showToast(err?.error || '加载文件列表失败', 'error')
+    }
+    if (sharesR.status === 'fulfilled') {
+      setShares(sharesR.value)
+    } else {
+      const err = sharesR.reason as { error?: string }
+      showToast(err?.error || '加载分享列表失败', 'error')
+    }
+    if (storageR.status === 'fulfilled') {
+      setStorage(storageR.value)
+    }
+    setLoading(false)
+  }, [navigate, showToast])
 
   useEffect(() => {
-    load()
+    load(true)
   }, [load])
 
   const handleUpload = async (fileList: FileList | null) => {
@@ -197,6 +216,7 @@ export default function AdminDashboard() {
             <thead>
               <tr>
                 <th>文件名</th>
+                <th>上传时间</th>
                 <th>大小</th>
                 <th>状态</th>
                 <th>操作</th>
@@ -206,6 +226,7 @@ export default function AdminDashboard() {
               {files.map((f) => (
                 <tr key={f.id}>
                   <td data-label="文件名">{f.name}</td>
+                  <td data-label="上传时间">{formatDateTime(f.createdAt)}</td>
                   <td data-label="大小">{formatSize(f.size)}</td>
                   <td data-label="状态">已上传</td>
                   <td data-label="操作">
@@ -233,6 +254,8 @@ export default function AdminDashboard() {
               <tr>
                 <th>文件</th>
                 <th>分享文案</th>
+                <th>创建时间</th>
+                <th>有效期</th>
                 <th>状态</th>
                 <th>操作</th>
               </tr>
@@ -246,6 +269,8 @@ export default function AdminDashboard() {
                 >
                   <td data-label="文件">{s.fileName}</td>
                   <td data-label="分享文案">{s.note || '—'}</td>
+                  <td data-label="创建时间">{formatDateTime(s.createdAt)}</td>
+                  <td data-label="有效期">{s.expiresAt ? formatDateTime(s.expiresAt) : '永久'}</td>
                   <td data-label="状态" className={s.status === '有效' ? 'status-active' : 'status-revoked'}>
                     {s.status}
                   </td>

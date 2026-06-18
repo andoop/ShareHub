@@ -8,6 +8,7 @@ import (
 type Config struct {
 	Addr         string
 	DataDir      string
+	BlobDir      string
 	AdminUser    string
 	AdminPass    string
 	JWTSecret    string
@@ -25,6 +26,7 @@ func Load() Config {
 	return Config{
 		Addr:          getenv("SHAREHUB_ADDR", ":8080"),
 		DataDir:       getenv("SHAREHUB_DATA_DIR", "./data"),
+		BlobDir:       os.Getenv("SHAREHUB_BLOB_DIR"),
 		AdminUser:     getenv("SHAREHUB_ADMIN_USER", "admin"),
 		AdminPass:     os.Getenv("SHAREHUB_ADMIN_PASS"),
 		JWTSecret:     getenv("SHAREHUB_JWT_SECRET", "change-me-in-prod"),

@@ -24,7 +24,7 @@ func testServer(t *testing.T) (*Server, *store.ShareStore, *store.FileStore) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { conn.Close() })
-	files, err := store.NewFileStore(conn, dir)
+	files, err := store.NewFileStore(conn, dir, "")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -16,7 +16,7 @@ func TestShareStoreCreateReturnsToken(t *testing.T) {
 	}
 	defer conn.Close()
 
-	fs, err := NewFileStore(conn, dir)
+	fs, err := NewFileStore(conn, dir, "")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -22,7 +22,16 @@ escape_for_json() {
 }
 
 bootstrap_escaped=$(escape_for_json "$bootstrap_content")
-session_context="<EXTREMELY_IMPORTANT>\n本项目使用 Sandtable（\u6c99\u76d8\u63a8\u6f14\u9a71\u52a8\u5f00\u53d1）。\n\n**下面是 'sandtable:using-sandtable' skill 的完整内容，它是你的入口。其它 skill 需要时再通过读取各自的 SKILL.md 按需加载：**\n\n${bootstrap_escaped}\n</EXTREMELY_IMPORTANT>"
+
+# If Sandtable mobile sync is active in this project, re-inject the standing
+# sync obligation so a long computer-side conversation never forgets it.
+mobile_sync_note=""
+sync_file="${PWD}/.sandtable-runtime/session/mobile-sync.json"
+if [ -f "$sync_file" ] && grep -q '"active"[[:space:]]*:[[:space:]]*true' "$sync_file" 2>/dev/null; then
+  mobile_sync_note="\n\n<EXTREMELY_IMPORTANT>\n\u68c0\u6d4b\u5230 Sandtable \u624b\u673a\u540c\u6b65\u5904\u4e8e active\uff1a\u53ea\u8981 sync server \u8fd8\u6d3b\u7740\uff0c\u540c\u6b65\u624b\u673a\u5c31\u662f\u5e38\u9a7b\u4e49\u52a1\uff0c\u4e0e\u89e6\u53d1\u6765\u6e90\u65e0\u5173\uff08\u624b\u673a\u6307\u4ee4\u6216\u4f60\u5728\u7535\u8111\u7aef\u76f4\u63a5\u5bf9\u8bdd\u90fd\u4e00\u6837\uff09\u3002\u5728\u91cd\u8981\u52a8\u4f5c\u7684\u524d/\u4e2d/\u540e\u3001\u9636\u6bb5\u5207\u6362\u3001\u5173\u952e\u51b3\u7b56\u3001\u4ea7\u751f\u5f85\u786e\u8ba4\u6216\u963b\u585e\u65f6\u4e3b\u52a8\u540c\u6b65\u5230\u624b\u673a\uff1b\u7b49\u5f85\u5b50 agent \u6c38\u4e45\u963b\u585e\u3001\u4e0d\u8bbe\u8d85\u65f6\u3002\u8be6\u89c1 mobile-companion skill \u4e0e AGENTS.md\u300c\u624b\u673a\u540c\u6b65\u5e38\u9a7b\u4e49\u52a1\u300d\u3002\n</EXTREMELY_IMPORTANT>"
+fi
+
+session_context="<EXTREMELY_IMPORTANT>\n本项目使用 Sandtable（\u6c99\u76d8\u63a8\u6f14\u9a71\u52a8\u5f00\u53d1）。\n\n**下面是 'sandtable:using-sandtable' skill 的完整内容，它是你的入口。其它 skill 需要时再通过读取各自的 SKILL.md 按需加载：**\n\n${bootstrap_escaped}\n</EXTREMELY_IMPORTANT>${mobile_sync_note}"
 
 if [ -n "${CURSOR_PLUGIN_ROOT:-}" ]; then
   printf '{\n  "additional_context": "%s"\n}\n' "$session_context"

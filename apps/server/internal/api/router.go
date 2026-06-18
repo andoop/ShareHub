@@ -1,6 +1,8 @@
 package api
 
 import (
+	"bytes"
+	"encoding/json"
 	"io"
 	"io/fs"
 	"net/http"
@@ -68,10 +70,32 @@ func (s *Server) Router() http.Handler {
 	})
 
 	if s.webFS != nil {
+		r.Get("/s/{token}", s.serveSharePage)
 		r.Get("/*", s.serveSPA)
 	}
 
 	return r
+}
+
+func (s *Server) serveSharePage(w http.ResponseWriter, r *http.Request) {
+	token := chi.URLParam(r, "token")
+	info, _ := s.downH.publicInfo(r, token)
+	bootstrap, err := json.Marshal(info)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "页面加载失败", "INTERNAL")
+		return
+	}
+	html, err := fs.ReadFile(s.webFS, "index.html")
+	if err != nil {
+		writeError(w, http.StatusNotFound, "页面不存在", "NOT_FOUND")
+		return
+	}
+	inject := append(append([]byte(`<script>window.__SHARE_BOOTSTRAP__=`), bootstrap...), []byte(`</script>`)...)
+	out := bytes.Replace(html, []byte(`<div id="root">`), append(inject, []byte(`<div id="root">`)...), 1)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(out)
 }
 
 func (s *Server) serveSPA(w http.ResponseWriter, r *http.Request) {
@@ -85,6 +109,10 @@ func (s *Server) serveSPA(w http.ResponseWriter, r *http.Request) {
 	}
 	f, err := s.webFS.Open(path)
 	if err != nil {
+		if strings.HasPrefix(path, "assets/") {
+			writeError(w, http.StatusNotFound, "资源不存在", "NOT_FOUND")
+			return
+		}
 		f, err = s.webFS.Open("index.html")
 		if err != nil {
 			writeError(w, http.StatusNotFound, "页面不存在", "NOT_FOUND")

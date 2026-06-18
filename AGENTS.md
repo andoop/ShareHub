@@ -65,3 +65,7 @@
 ## PRD 确认门禁
 
 - 若 `prd.md` 已存在但无可核实开发者确认记录，不得派发 mental/红军子 agent；同条消息确认 PRD 时，必须在派发前或同时把确认证据持久化到 `state.md` 或 `journal.md`。
+
+## 手机同步常驻义务（仅当 mobile-sync active）
+
+只要 `.sandtable-runtime/session/mobile-sync.json` 的 `active=true` 且 sync server 在跑，**同步手机就是常驻义务，与触发来源无关**——手机指令或开发者在电脑端直接对话都一样。在重要动作的**前/中/后**、阶段切换、关键决策、产生待确认或阻塞时**主动**同步到手机（不要只在手机发消息时才同步）；**等待子 agent 永久阻塞、不设超时**（仅宿主有硬执行上限才用 `SANDTABLE_WAIT_MAX_SECONDS` 兜底，超时即无缝再派一个）。细节见 `skills/mobile-companion/SKILL.md`。
